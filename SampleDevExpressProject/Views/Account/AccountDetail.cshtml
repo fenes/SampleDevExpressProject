@@ -1,0 +1,14 @@
+@model SampleDevExpressProject.Models.Account.Account
+
+@{
+    ViewBag.Title = "Account Details Page";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="text-content">
+    <h1 class="title" id="SubjectText">@Model.Name @Model.Surname</h1>
+    <hr />
+    <p>Account Code : @Model.Code</p>
+    <p>Town : @Model.Town</p>
+    <hr />
+</div>

@@ -1,0 +1,214 @@
+@model List<SampleDevExpressProject.Models.Account.Account>
+
+@{
+    var gridView = Html.DevExpress().GridView(gridViewSettings =>
+    {
+        gridViewSettings.Name = "gridView";
+        gridViewSettings.KeyFieldName = "Id";
+
+        gridViewSettings.CallbackRouteValues = new { Controller = "Account", Action = "GridViewPartial" };
+        gridViewSettings.CustomActionRouteValues = new { Controller = "Account", Action = "GridViewCustomActionPartial" };
+        gridViewSettings.SettingsEditing.AddNewRowRouteValues = new { Controller = "Account", Action = "AddAccount" };
+        gridViewSettings.SettingsEditing.UpdateRowRouteValues = new { Controller = "Account", Action = "UpdateAccount" };
+
+        gridViewSettings.EnablePagingGestures = AutoBoolean.False;
+
+        gridViewSettings.ControlStyle.CssClass = "grid-view";
+        gridViewSettings.Width = Unit.Percentage(100);
+
+        gridViewSettings.Styles.Cell.Wrap = DefaultBoolean.False;
+        gridViewSettings.Styles.PagerBottomPanel.CssClass = "pager";
+        gridViewSettings.Styles.FocusedRow.CssClass = "focused";
+
+        gridViewSettings.SettingsBehavior.AllowFocusedRow = true;
+        gridViewSettings.SettingsBehavior.AllowSelectByRowClick = true;
+        gridViewSettings.SettingsBehavior.AllowEllipsisInText = true;
+        gridViewSettings.SettingsBehavior.AllowDragDrop = false;
+
+        gridViewSettings.SettingsSearchPanel.CustomEditorName = "searchButtonEdit";
+
+        gridViewSettings.SettingsEditing.Mode = GridViewEditingMode.PopupEditForm;
+        gridViewSettings.SettingsEditing.EditFormColumnCount = 2;
+
+        gridViewSettings.SettingsSearchPanel.CustomEditorName = "searchButtonEdit";
+
+        gridViewSettings.Settings.VerticalScrollBarMode = ScrollBarMode.Hidden;
+        gridViewSettings.Settings.HorizontalScrollBarMode = ScrollBarMode.Auto;
+        gridViewSettings.Settings.ShowHeaderFilterButton = true;
+
+        gridViewSettings.SettingsPager.PageSize = 10;
+        gridViewSettings.SettingsPager.EnableAdaptivity = true;
+        gridViewSettings.SettingsPager.PageSizeItemSettings.Visible = true;
+
+        gridViewSettings.SettingsExport.EnableClientSideExportAPI = true;
+        gridViewSettings.SettingsExport.ExportSelectedRowsOnly = true;
+
+        gridViewSettings.SettingsPopup.EditForm.SettingsAdaptivity.MaxWidth = 800;
+        gridViewSettings.SettingsPopup.EditForm.SettingsAdaptivity.Mode = PopupControlAdaptivityMode.Always;
+        gridViewSettings.SettingsPopup.EditForm.SettingsAdaptivity.VerticalAlign = PopupAdaptiveVerticalAlign.WindowCenter;
+
+        gridViewSettings.EditFormLayoutProperties.SettingsAdaptivity.AdaptivityMode = FormLayoutAdaptivityMode.SingleColumnWindowLimit;
+        gridViewSettings.EditFormLayoutProperties.SettingsAdaptivity.SwitchToSingleColumnAtWindowInnerWidth = 600;
+        gridViewSettings.EditFormLayoutProperties.ColCount = 2;
+        gridViewSettings.EditFormLayoutProperties.Items.Add("Code").RequiredMarkDisplayMode = FieldRequiredMarkMode.Required;
+        gridViewSettings.EditFormLayoutProperties.Items.Add("TCKNumber").RequiredMarkDisplayMode = FieldRequiredMarkMode.Required;
+        gridViewSettings.EditFormLayoutProperties.Items.Add("TaxNumber").RequiredMarkDisplayMode = FieldRequiredMarkMode.Required;
+        gridViewSettings.EditFormLayoutProperties.Items.Add(itemSettings =>
+        {
+            itemSettings.ColumnName = "Address";
+            itemSettings.ColumnSpan = 2;
+        });
+        gridViewSettings.EditFormLayoutProperties.Items.Add("Name").RequiredMarkDisplayMode = FieldRequiredMarkMode.Required;
+        gridViewSettings.EditFormLayoutProperties.Items.Add("Surname").RequiredMarkDisplayMode = FieldRequiredMarkMode.Required;
+        gridViewSettings.EditFormLayoutProperties.Items.Add("AccountType").RequiredMarkDisplayMode = FieldRequiredMarkMode.Required;
+        gridViewSettings.EditFormLayoutProperties.Items.Add("Email");
+        gridViewSettings.EditFormLayoutProperties.Items.Add("Telephone");
+        gridViewSettings.EditFormLayoutProperties.Items.Add("WebAddress");
+        gridViewSettings.EditFormLayoutProperties.Items.Add("Town");
+        gridViewSettings.EditFormLayoutProperties.Items.Add("Country");
+        gridViewSettings.EditFormLayoutProperties.Items.AddCommandItem(itemSettings =>
+        {
+            itemSettings.ColumnSpan = 2;
+            itemSettings.HorizontalAlign = FormLayoutHorizontalAlign.Right;
+        });
+
+        gridViewSettings.CommandColumn.Visible = true;
+        gridViewSettings.CommandColumn.ShowSelectCheckbox = true;
+        gridViewSettings.CommandColumn.SelectAllCheckboxMode = GridViewSelectAllCheckBoxMode.AllPages;
+        gridViewSettings.CommandColumn.VisibleIndex = 0;
+        gridViewSettings.CommandColumn.Width = Unit.Pixel(52);
+
+        gridViewSettings.Columns.Add(columnSettings =>
+        {
+            columnSettings.FieldName = "Code";
+            columnSettings.Caption = "Code";
+
+            columnSettings.Width = System.Web.UI.WebControls.Unit.Pixel(100);
+            columnSettings.CellStyle.HorizontalAlign = HorizontalAlign.Left;
+            columnSettings.ExportCellStyle.HorizontalAlign = HorizontalAlign.Left;
+            columnSettings.SetDataItemTemplateContent(c =>
+            {
+                Html.DevExpress().HyperLink(hyperLinkSettings =>
+                {
+                    hyperLinkSettings.Properties.Text = (string)DataBinder.Eval(c.DataItem, "Code");
+                    hyperLinkSettings.NavigateUrl = Url.Action("AccountDetail", "Account", new { id = DataBinder.Eval(c.DataItem, "Id") });
+                }).Render();
+            });
+
+            columnSettings.Settings.FilterMode = ColumnFilterMode.DisplayText;
+            columnSettings.Settings.SortMode = DevExpress.XtraGrid.ColumnSortMode.DisplayText;
+        });
+        gridViewSettings.Columns.Add(columnSettings =>
+        {
+            columnSettings.FieldName = "TCKNumber";
+            columnSettings.Caption = "TC Number";
+            columnSettings.Width = Unit.Pixel(150);
+        });
+        gridViewSettings.Columns.Add(columnSettings =>
+        {
+            columnSettings.FieldName = "Name";
+            columnSettings.Caption = "Name";
+            columnSettings.Width = Unit.Pixel(150);
+        });
+        gridViewSettings.Columns.Add(columnSettings =>
+        {
+            columnSettings.FieldName = "Surname";
+            columnSettings.Caption = "Surname";
+            columnSettings.Width = Unit.Pixel(100);
+        });
+
+        gridViewSettings.Columns.Add(columnSettings =>
+        {
+            columnSettings.FieldName = "AccountType";
+            columnSettings.Caption = "Type";
+            columnSettings.Width = Unit.Pixel(80);
+            columnSettings.CellStyle.HorizontalAlign = HorizontalAlign.Center;
+
+            columnSettings.EditorProperties().ComboBox(comboBoxProperties =>
+            {
+                comboBoxProperties.ShowImageInEditBox = true;
+                comboBoxProperties.ItemImage.Width = 12;
+                comboBoxProperties.ItemImage.Height = 12;
+                comboBoxProperties.Items.Add("Company", 1, "Content/Images/Scheduler.svg");
+                comboBoxProperties.Items.Add("People", 2, "Content/Images/people.svg");
+            });
+
+            columnSettings.SetDataItemTemplateContent(c =>
+            {
+                Html.DevExpress().Image(imageSettings =>
+                {
+                    imageSettings.Name = "AccountTypeImage" + Convert.ToString(c.KeyValue);
+                    imageSettings.ControlStyle.CssClass = string.Format("AccountType{0}", DataBinder.Eval(c.DataItem, "AccountType"));
+                    imageSettings.Width = Unit.Pixel(12);
+                    imageSettings.Height = Unit.Pixel(12);
+                }).Render();
+            });
+        });
+        gridViewSettings.Columns.Add(columnSettings =>
+        {
+            columnSettings.FieldName = "TaxNumber";
+            columnSettings.Caption = "Tax Number";
+            columnSettings.Width = Unit.Pixel(150);
+        });
+        gridViewSettings.Columns.Add(columnSettings =>
+        {
+            columnSettings.FieldName = "Email";
+            columnSettings.Width = Unit.Pixel(150);
+        });
+        gridViewSettings.Columns.Add(columnSettings =>
+        {
+            columnSettings.FieldName = "Telephone";
+            columnSettings.Width = Unit.Pixel(100);
+        });
+        gridViewSettings.Columns.Add(columnSettings =>
+        {
+            columnSettings.FieldName = "WebAddress";
+            columnSettings.Width = Unit.Pixel(150);
+        });
+        gridViewSettings.Columns.Add(columnSettings =>
+        {
+            columnSettings.FieldName = "Town";
+            columnSettings.Width = Unit.Pixel(100);
+        });
+        gridViewSettings.Columns.Add(columnSettings =>
+        {
+            columnSettings.FieldName = "Country";
+            columnSettings.Width = Unit.Pixel(100);
+        });
+        gridViewSettings.Columns.Add(columnSettings =>
+        {
+            columnSettings.FieldName = "Address";
+            columnSettings.Visible = false;
+            columnSettings.EditorProperties().Memo(memoSettings =>
+            {
+                memoSettings.Rows = 3;
+            });
+        });
+        gridViewSettings.Columns.Add(columnSettings =>
+        {
+            columnSettings.FieldName = "Created";
+            columnSettings.PropertiesEdit.DisplayFormatString = "d";
+        });
+        gridViewSettings.Columns.Add(columnSettings =>
+        {
+            columnSettings.FieldName = "Updated";
+            columnSettings.PropertiesEdit.DisplayFormatString = "d";
+        });
+
+        gridViewSettings.ClientSideEvents.Init = "onGridViewInit";
+        gridViewSettings.ClientSideEvents.SelectionChanged = "onGridViewSelectionChanged";
+        gridViewSettings.ClientSideEvents.BeginCallback = "onGridViewBeginCallback";
+
+
+        gridViewSettings.CellEditorInitialize = (s, e) =>
+        {
+            ((ASPxEdit)e.Editor).ValidationSettings.Display = Display.Dynamic;
+        };
+    });
+    if (ViewBag.GeneralError != null)
+    {
+        gridView.SetEditErrorText(ViewBag.GeneralError);
+    }
+}
+
+@gridView.Bind(Model).GetHtml()
